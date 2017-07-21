@@ -89,6 +89,9 @@ class Elevator(object):
                     self.to_go.insert(i+1, new_floor)
                     inserted = 1
                     break
+            if (len(self.to_go) == 1) and (new_floor < self.to_go[0]):
+                self.to_go.insert(0, new_floor)
+                inserted = 1
             if inserted == 0:
                 self.to_go.append(new_floor)
         elif (new_floor < self.current_floor) and (self.direction == 0):
@@ -105,24 +108,23 @@ class Elevator(object):
                     self.to_go.insert(i+1, new_floor)
                     inserted = 1
                     break
+            if (len(self.to_go) == 1) and (new_floor > self.to_go[0]):
+                self.to_go.insert(0, new_floor)
+                inserted = 1
             if inserted == 0:
                 self.to_go.append(new_floor)
         elif (new_floor > self.current_floor) and (self.direction == 0):
             # go down first and when direction changes visit new in order
             direction_change_index = 0
-
             for i in range(len(self.to_go) - 1):
                 f = self.to_go[i]
                 n = self.to_go[i+1]
-
                 if n > f:
                     direction_change_index = i + 1
                     break
-
             for i in range(direction_change_index, len(self.to_go) - 1):
                 f = self.to_go[i]
                 n = self.to_go[i+1]
-
                 if (f < new_floor) and (new_floor < n):
                     self.to_go.insert(i+1, new_floor)
                     inserted = 1
@@ -193,7 +195,7 @@ def main():
     n_floors = 6 # 1, 2, 3, 4, 5, 6
     current_floor = 1
     direction = 1 # downward = 0, upward = 1
-    random_numbers = np.random.rand(10)*n_floors + 1.0
+    random_numbers = np.random.rand(15)*n_floors + 1.0
     random_calls = [int(num) for num in random_numbers]
 
     print('Floors to go:', random_calls)
@@ -203,6 +205,7 @@ def main():
 
     while True:
 
+        # status
         elevator.print_status()
 
         # call a floor
