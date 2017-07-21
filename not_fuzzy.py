@@ -178,7 +178,7 @@ class Elevator(object):
 
     def print_status(self):
         arrow = 'v'
-        if self.direction == 0:
+        if self.direction == 1:
             arrow = '^'
         print('STATUS:', self.current_floor, arrow, self.to_go)
 
@@ -188,22 +188,23 @@ def main():
     n_floors = 6 # 1, 2, 3, 4, 5, 6
     current_floor = 1
     direction = 1 # downward = 0, upward = 1
-    random_numbers = np.random.rand(50)*n_floors + 1.0
+    random_numbers = np.random.rand(10)*n_floors + 1.0
     random_calls = [int(num) for num in random_numbers]
 
     print('Floors to go:', random_calls)
 
     elevator = Elevator(n_floors=n_floors, start_floor=current_floor)
+    elevator.print_status()
 
     while True:
 
-        # stop
-        if len(random_calls) != 0:
-            # call a floor
-            if np.random.rand(1)[0] > 0.5:
-                elevator.call_a_floor(random_calls[-1])
-                random_calls.pop()
-                #print('Floors to go:', random_calls)
+        elevator.print_status()
+
+        # call a floor
+        if (len(random_calls) != 0) and (np.random.rand(1)[0] > 0.5):
+            elevator.call_a_floor(random_calls[0])
+            random_calls.pop(0)
+            #print('Floors to go:', random_calls)
 
         # move
         if elevator.has_floors_to_go():
@@ -211,8 +212,7 @@ def main():
         else:
             time.sleep(1)
 
-        elevator.print_status()
-
+        # break loop
         if (len(random_calls) == 0) and (not elevator.has_floors_to_go()):
             break
 
