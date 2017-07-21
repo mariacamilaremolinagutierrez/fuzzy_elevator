@@ -35,6 +35,12 @@ class Elevator(object):
             self.current_floor += 1
         elif (self.direction == 0) and (self.current_floor != 1):
             self.current_floor -= 1
+        elif (self.direction == 1) and (self.current_floor == self.n_floors):
+            self.current_floor -= 1
+            self.direction = 0
+        elif (self.direction == 0) and (self.current_floor == 1):
+            self.current_floor += 1
+            self.direction = 1
 
         if self.current_floor == self.to_go[0]:
             self.stop_at_floor()
@@ -47,14 +53,20 @@ class Elevator(object):
         # update direction
         self.update_direction()
 
+        # status
+        #self.print_status
+
     def stop_at_floor(self):
 
         # update direction
         self.update_direction()
 
         # update to_go
-        if len(to_go) >= 1:
+        if len(self.to_go) >= 1:
             self.to_go = self.to_go[1:]
+
+        # status
+        #self.print_status()
 
     def insert_in_to_go(self, new_floor):
 
@@ -164,13 +176,19 @@ class Elevator(object):
         else:
             return False
 
+    def print_status(self):
+        arrow = 'v'
+        if self.direction == 0:
+            arrow = '^'
+        print('STATUS:', self.current_floor, arrow, self.to_go)
+
 
 def main():
     # Elevator attributes
     n_floors = 6 # 1, 2, 3, 4, 5, 6
     current_floor = 1
     direction = 1 # downward = 0, upward = 1
-    random_numbers = np.random.rand(20)*n_floors + 1.0
+    random_numbers = np.random.rand(50)*n_floors + 1.0
     random_calls = [int(num) for num in random_numbers]
 
     print('Floors to go:', random_calls)
@@ -180,13 +198,12 @@ def main():
     while True:
 
         # stop
-        if len(random_calls) == 0:
-            break
-
-        # call a floor
-        if np.random.rand(1)[0] > 0.5:
-            elevator.call_a_floor(random_calls[-1])
-            random_calls.pop()
+        if len(random_calls) != 0:
+            # call a floor
+            if np.random.rand(1)[0] > 0.5:
+                elevator.call_a_floor(random_calls[-1])
+                random_calls.pop()
+                #print('Floors to go:', random_calls)
 
         # move
         if elevator.has_floors_to_go():
@@ -194,6 +211,10 @@ def main():
         else:
             time.sleep(1)
 
+        elevator.print_status()
+
+        if (len(random_calls) == 0) and (not elevator.has_floors_to_go()):
+            break
 
 
 
