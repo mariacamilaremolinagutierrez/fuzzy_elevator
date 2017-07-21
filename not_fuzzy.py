@@ -16,13 +16,14 @@ class Elevator(object):
 
     # Actions
     A. After 0 or 1 => call_a_floor: update to_go list and direction
-    B. After 2 => stop_at_floor: update direction (based on second element) and
-                  to_go list (pop first element)
+    B. After 2 => stop_at_floor: update to_go list (pop first element) and
+                                 direction
     """
 
     def __init__(self, n_floors, start_floor):
         """ Initializing variables. """
         self.n_floors = n_floors
+        self.previous_floor = 0
         self.current_floor = start_floor
         self.direction = 1 # downward = 0, upward = 1
         self.to_go = []
@@ -31,19 +32,19 @@ class Elevator(object):
     def move_a_floor(self):
         #time.sleep(self.time_floor_to_floor)
 
-        if (self.direction == 1) and (self.current_floor != self.n_floors):
-            self.current_floor += 1
-        elif (self.direction == 0) and (self.current_floor != 1):
-            self.current_floor -= 1
-        elif (self.direction == 1) and (self.current_floor == self.n_floors):
-            self.current_floor -= 1
-            self.direction = 0
-        elif (self.direction == 0) and (self.current_floor == 1):
-            self.current_floor += 1
-            self.direction = 1
-
         if self.current_floor == self.to_go[0]:
             self.stop_at_floor()
+
+        if (self.direction == 1) and (self.current_floor != self.n_floors):
+            self.update_current_floor(self.current_floor+1)
+        elif (self.direction == 0) and (self.current_floor != 1):
+            self.update_current_floor(self.current_floor-1)
+        elif (self.direction == 1) and (self.current_floor == self.n_floors):
+            self.update_current_floor(self.current_floor-1)
+            self.direction = 0
+        elif (self.direction == 0) and (self.current_floor == 1):
+            self.update_current_floor(self.current_floor+1)
+            self.direction = 1
 
     def call_a_floor(self, new_floor):
 
@@ -58,12 +59,12 @@ class Elevator(object):
 
     def stop_at_floor(self):
 
-        # update direction
-        self.update_direction()
-
         # update to_go
         if len(self.to_go) >= 1:
             self.to_go = self.to_go[1:]
+
+        # update direction
+        self.update_direction()
 
         # status
         #self.print_status()
@@ -161,14 +162,17 @@ class Elevator(object):
 
     def update_direction(self):
 
-        if len(self.to_go) >= 2:
-            current_f = self.to_go[0]
-            next_f = self.to_go[1]
+        if len(self.to_go) >= 1:
+            next_f = self.to_go[0]
 
-            if next_f > current_f:
+            if next_f > self.current_floor:
                 self.direction = 1
             else:
                 self.direction = 0
+
+    def update_current_floor(self, new_value):
+        self.previous_floor = self.current_floor
+        self.current_floor = new_value
 
     def has_floors_to_go(self):
         if len(self.to_go) != 0:
@@ -180,7 +184,8 @@ class Elevator(object):
         arrow = 'v'
         if self.direction == 1:
             arrow = '^'
-        print('STATUS:', self.current_floor, arrow, self.to_go)
+        print('STATUS:', self.previous_floor, arrow, self.current_floor,
+              self.to_go)
 
 
 def main():
@@ -201,7 +206,7 @@ def main():
         elevator.print_status()
 
         # call a floor
-        if (len(random_calls) != 0) and (np.random.rand(1)[0] > 0.5):
+        if (len(random_calls) != 0) and (np.random.rand(1)[0] > 0.2):
             elevator.call_a_floor(random_calls[0])
             random_calls.pop(0)
             #print('Floors to go:', random_calls)
