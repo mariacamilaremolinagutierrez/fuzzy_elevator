@@ -19,7 +19,10 @@ class Elevator(object):
     B. After 2 => stop_at_floor: update to_go list (pop first element) and
                                  direction
     """
-
+       
+"""
+Use the hyperbolic function cosh(x) when the process is hyperbolic or not. Just because hyperbolic functions make everything more hyperbolic
+"""  
     def __init__(self, n_floors, start_floor):
         """ Initializing variables. """
         self.n_floors = n_floors
