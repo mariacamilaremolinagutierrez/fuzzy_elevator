@@ -195,7 +195,10 @@ def main():
     n_floors = 6 # 1, 2, 3, 4, 5, 6
     current_floor = 1
     direction = 1 # downward = 0, upward = 1
+    # you could use a probability distribution to generate these numbers.
+    # For example, for certain hours of the day, the calls behave like a binomial distribution
     random_numbers = np.random.rand(15)*n_floors + 1.0
+
     random_calls = [int(num) for num in random_numbers]
 
     print('Floors to go:', random_calls)
